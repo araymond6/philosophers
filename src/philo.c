@@ -6,7 +6,7 @@
 /*   By: araymond <araymond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 17:07:45 by araymond          #+#    #+#             */
-/*   Updated: 2023/06/16 14:15:33 by araymond         ###   ########.fr       */
+/*   Updated: 2023/06/27 15:18:07 by araymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,23 +41,71 @@ int	ft_sleep(t_ms time)
 void	*life(void *arg)
 {
 	t_philo	*philo;
+	t_philo	*temp;
+	int		i;
 
 	philo = arg;
-	if (pthread_detach(philo->thread_id) != 0)
-		return (NULL);
+	i = 0;
 	philo->start_time = timestamp();
 	philo->last_meal = philo->start_time;
-	if (philo->philo_number % 2 == 1)
+	temp = philo;
+	if (philo->philo_number % 2 == 0)
 		usleep(100);
 	while (1)
 	{
 		if (!lock_check(philo))
 			break ;
+		if (!is_philo_dead(philo) || philo->meal_count >= philo->params->amount_to_eat)
+			break ;
 	}
 	return (NULL);
 }
 
-void	create_philo(t_params *params)
+// philo thread for 4 args
+void	*life2(void *arg)
+{
+	t_philo	*philo;
+	t_philo	*temp;
+	int		i;
+
+	philo = arg;
+	i = 0;
+	philo->start_time = timestamp();
+	philo->last_meal = philo->start_time;
+	temp = philo;
+	if (philo->philo_number % 2 == 0)
+		usleep(100);
+	while (1)
+	{
+		if (!lock_check(philo))
+			break ;
+		if (!is_philo_dead(philo))
+			break ;
+	}
+	return (NULL);
+}
+
+// philo thread for 1 thread
+void	*life3(void *arg)
+{
+	t_philo	*philo;
+	t_philo	*temp;
+	int		i;
+
+	philo = arg;
+	i = 0;
+	philo->start_time = timestamp();
+	philo->last_meal = philo->start_time;
+	temp = philo;
+	while (1)
+	{
+		if (!is_philo_dead(philo))
+			return (NULL);
+	}
+	return (NULL);
+}
+
+void	create_philo(t_params *params, int argc)
 {
 	t_philo	*philo;
 	t_philo	*temp;
@@ -70,14 +118,28 @@ void	create_philo(t_params *params)
 	if (set_philosophers(params, &philo) == NULL)
 		return ;
 	temp = philo;
-	while (++i < (int)philo->params->philo_count)
+	while (i++ < (int)temp->params->philo_count)
 	{
-		if (pthread_create(&temp->thread_id, NULL, &life, temp) != 0)
-			break ;
+		if (philo->params->philo_count == 1)
+		{
+			if (pthread_create(&temp->thread_id, NULL, &life3, temp) != 0)
+				break ;
+		}
+		else if (argc == 6)
+		{
+			if (pthread_create(&temp->thread_id, NULL, &life, temp) != 0)
+				break ;
+		}
+		else
+		{
+			if (pthread_create(&temp->thread_id, NULL, &life2, temp) != 0)
+				break ;
+		}
 		temp = temp->right_philo;
 	}
 	temp = philo;
-	while (--i > 0)
+	i = 0;
+	while (i++ < (int)philo->params->philo_count)
 	{
 		pthread_join(temp->thread_id, NULL);
 		temp = temp->right_philo;

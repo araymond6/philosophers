@@ -6,11 +6,12 @@
 /*   By: araymond <araymond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 11:14:49 by araymond          #+#    #+#             */
-/*   Updated: 2023/06/14 17:08:19 by araymond         ###   ########.fr       */
+/*   Updated: 2023/06/27 12:48:41 by araymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headers/parsing.h"
+#include "headers/utils.h"
 
 void	ft_bzero(void *arg, unsigned int size)
 {
@@ -23,26 +24,19 @@ void	ft_bzero(void *arg, unsigned int size)
 		*(str++) = 0;
 }
 
-pthread_mutex_t	*lock_function(void *arg)
-{
-	static pthread_mutex_t	*func_lock;
-
-	if (arg)
-		func_lock = arg;
-	return (func_lock);
-}
-
 int main(int argc, char **argv)
 {
 	pthread_mutex_t	*func_lock;
+	pthread_mutex_t	*printing;
 
-	func_lock = malloc(sizeof(func_lock));
-	if (!func_lock)
-		return (EXIT_FAILURE);
-	lock_function(func_lock);
-	if (pthread_mutex_init(lock_function(NULL), NULL) != 0)
+	func_lock = init_mutex();
+	printing = init_mutex();
+	if (!print_function(printing) || !lock_function(func_lock))
 	{
-		free(func_lock);
+		if (func_lock)
+			free(func_lock);
+		if (printing)
+			free(printing);
 		return (EXIT_FAILURE);
 	}
 	if (argc == 5 || argc == 6)
@@ -52,7 +46,6 @@ int main(int argc, char **argv)
 			printf("Error.");
 			return (EXIT_FAILURE);
 		}
-		return (EXIT_SUCCESS);
 	}
-	return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }

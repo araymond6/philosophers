@@ -1,24 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils2.h                                           :+:      :+:    :+:   */
+/*   utils3.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: araymond <araymond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/01 11:24:32 by araymond          #+#    #+#             */
-/*   Updated: 2023/06/27 12:27:11 by araymond         ###   ########.fr       */
+/*   Created: 2023/06/27 12:19:25 by araymond          #+#    #+#             */
+/*   Updated: 2023/06/27 12:48:56 by araymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS2_H
-# define UTILS2_H
+#include "headers/main.h"
 
-#include "main.h"
+pthread_mutex_t	*lock_function(void *arg)
+{
+	static pthread_mutex_t	*func_lock;
 
-int				addback_philo(t_philo **philo);
-void			clear_philosophers(t_philo **philo);
-int				initiate_fork(t_philo *philo);
-pthread_mutex_t	*init_mutex(void);
-int				pthread_join_loop(t_philo *philo);
+	if (arg)
+		func_lock = arg;
+	return (func_lock);
+}
 
-#endif
+pthread_mutex_t	*print_function(void *arg)
+{
+	static pthread_mutex_t	*func_print;
+
+	if (arg)
+		func_print = arg;
+	return (func_print);
+}

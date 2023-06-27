@@ -6,7 +6,7 @@
 /*   By: araymond <araymond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 12:00:03 by araymond          #+#    #+#             */
-/*   Updated: 2023/06/15 11:31:42 by araymond         ###   ########.fr       */
+/*   Updated: 2023/06/27 14:18:47 by araymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,20 +49,19 @@ t_params	*set_params(int argc, char **argv)
 	params = malloc(sizeof(t_params));
 	if (!params)
 		return (NULL);
+	ft_bzero(params, sizeof(t_params));
 	i = 1;
 	j = 0;
 	while (i < argc)
-	{
 		params->params[j++] = ft_atoi(argv[i++]);
-	}
+	if (argc == 5)
+		params->amount_to_eat = -1;
 	return (params);
 }
 
 int	is_digit(char c)
 {
-	if (c >= '0' && c <= '9')
-		return (1);
-	return (0);
+	return (c >= '0' && c <= '9');
 }
 
 t_philo	*initiate_philo(t_params *params)
@@ -88,14 +87,19 @@ t_philo	*initiate_philo(t_params *params)
 
 t_philo	*set_philosophers(t_params *params, t_philo **philo)
 {
-	unsigned int	i;
-	t_philo			*temp;
+	int		i;
+	t_philo	*temp;
 
 	i = 0;
 	temp = *philo;
+	if (temp->params->philo_count == 1)
+	{
+		temp->right_philo = *philo;
+		return (*philo);
+	}
 	while (i < params->philo_count)
 	{
-		if (!(i + 1 == params->philo_count))
+		if (i + 1 != params->philo_count)
 		{
 			if (addback_philo(philo) == 0)
 				return (clear_philosophers(philo), NULL);

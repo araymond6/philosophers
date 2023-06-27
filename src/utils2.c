@@ -6,24 +6,44 @@
 /*   By: araymond <araymond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 12:50:56 by araymond          #+#    #+#             */
-/*   Updated: 2023/06/15 11:53:42 by araymond         ###   ########.fr       */
+/*   Updated: 2023/06/27 14:33:49 by araymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headers/utils.h"
 
+int	pthread_join_loop(t_philo *philo)
+{
+	t_philo	*temp;
+	int		i;
+
+	i = 0;
+	temp = philo;
+	while (++i < (int)philo->params->philo_count)
+	{
+		if (pthread_join(temp->thread_id, NULL) != 0)
+			return (ERROR);
+		temp = temp->right_philo;
+	}
+	return (SUCCESS);
+}
+
 void	clear_philosophers(t_philo **philo)
 {
 	t_philo	*temp;
 	
+	if (!philo)
+		return ;
 	temp = *philo;
-	while ((*philo)->right_philo != NULL)
+	while (temp != NULL)
 	{
 		if (temp)
-		*philo = (*philo)->right_philo;
-		pthread_mutex_destroy(temp->fork);
-		free(temp->fork);
-		free(temp);
+		{
+			*philo = (*philo)->right_philo;
+			pthread_mutex_destroy(temp->fork);
+			pthread_mutex_destroy(lock_function(NULL));
+			free(temp);
+		}
 		temp = *philo;
 	}
 }
@@ -59,12 +79,10 @@ int	initiate_fork(t_philo *philo)
 	return (SUCCESS);
 }
 
-pthread_mutex_t	*init_mutex(pthread_mutex_t *prev)
+pthread_mutex_t	*init_mutex(void)
 {
 	pthread_mutex_t *mutex;
 
-	if (prev)
-		return (prev);
 	mutex = malloc(sizeof(pthread_mutex_t));
 	if (!mutex)
 		return (NULL);

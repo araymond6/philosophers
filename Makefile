@@ -13,7 +13,8 @@ SRCS =	main.c \
 		philo.c \
 		philo_actions.c \
 		utils2.c \
-		forks.c
+		forks.c \
+		utils3.c
 VPATH = $(SRC_DIR) $(HEADER_DIR) $(OBJ_DIR)
 
 OBJS = $(SRCS:%.c=%.o)

@@ -6,7 +6,7 @@
 /*   By: araymond <araymond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 11:15:01 by araymond          #+#    #+#             */
-/*   Updated: 2023/06/15 12:00:44 by araymond         ###   ########.fr       */
+/*   Updated: 2023/06/27 14:19:08 by araymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,25 +40,26 @@ typedef struct s_params
 	{
 		struct 
 		{
-			unsigned int	philo_count;
-			unsigned int	time_to_die;
-			unsigned int	time_to_eat;
-			unsigned int	time_to_sleep;
-			unsigned int	amount_to_eat;
+			int	philo_count;
+			int	time_to_die;
+			int	time_to_eat;
+			int	time_to_sleep;
+			int	amount_to_eat;
 		};
-		unsigned int params[5];
+		int params[5];
 	};
 	
 }	t_params;
 
 typedef struct s_philo
 {
-	unsigned int		philo_number;
+	int					philo_number;
 	pthread_t			thread_id;
 	pthread_t			cycle_id;
 	pthread_mutex_t		*fork;
 	int					locked;
 	int					dead;
+	int					meal_count;
 	t_ms				eating;
 	t_ms				sleeping;
 	t_ms				start_time;
@@ -69,5 +70,6 @@ typedef struct s_philo
 
 void			ft_bzero(void *arg, unsigned int size);
 pthread_mutex_t	*lock_function(void *arg);
+pthread_mutex_t	*print_function(void *arg);
 
 #endif

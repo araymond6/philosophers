@@ -6,7 +6,7 @@
 /*   By: araymond <araymond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 11:37:01 by araymond          #+#    #+#             */
-/*   Updated: 2023/06/15 15:54:47 by araymond         ###   ########.fr       */
+/*   Updated: 2023/06/27 14:04:24 by araymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,24 +17,18 @@
 
 int	lock_check(t_philo *philo)
 {
-	while (philo->locked != 1 || philo->right_philo->locked != 1)
+	pthread_mutex_lock(lock_function(NULL));
+	if (philo->locked == 0 && philo->right_philo->locked == 0)
 	{
-		usleep(10);
-		pthread_mutex_lock(lock_function(NULL));
-		if (philo->locked == 0 && philo->right_philo->locked == 0)
+		if (!lock_forks(philo))
 		{
-			if (!lock_forks(philo))
-				return (ERROR);
+			pthread_mutex_unlock(lock_function(NULL));
+			return (ERROR);
 		}
-		else
-		{
-			if (!print_message(philo, THINKING))
-				return (ERROR);
-		}
-		pthread_mutex_unlock(lock_function(NULL));
-		if (!death_check(philo))
-		return (ERROR);
 	}
+	pthread_mutex_unlock(lock_function(NULL));
+	if (!is_philo_dead(philo))
+	return (ERROR);
 	if (!unlock_check(philo))
 		return (ERROR);
 	return (SUCCESS);
@@ -44,13 +38,14 @@ int	unlock_check(t_philo *philo)
 {
 	if (philo->eating != 0)
 	{
-		if (!ft_sleep(philo->params->time_to_eat))
-			return (ERROR);
-		if (!death_check(philo))
-			return (ERROR);
+		if (!philo_action(philo, philo->params->time_to_eat))
+		return (ERROR);
 		pthread_mutex_lock(lock_function(NULL));
 		if (!unlock_forks(philo))
+		{
+			pthread_mutex_unlock(lock_function(NULL));
 			return (ERROR);
+		}
 		pthread_mutex_unlock(lock_function(NULL));
 		if (!philo_sleep(philo))
 			return (ERROR);
@@ -65,6 +60,7 @@ int	unlock_forks(t_philo *philo)
 	pthread_mutex_unlock(philo->right_philo->fork);
 	philo->right_philo->locked = 0;
 	philo->eating = 0;
+	philo->meal_count++;
 	philo->last_meal = timestamp();
 	return (SUCCESS);
 }

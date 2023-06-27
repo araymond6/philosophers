@@ -6,7 +6,7 @@
 /*   By: araymond <araymond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 11:15:50 by araymond          #+#    #+#             */
-/*   Updated: 2023/06/14 17:31:03 by araymond         ###   ########.fr       */
+/*   Updated: 2023/06/27 15:15:32 by araymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 
 int	check_numbers(char *arg)
 {
-	int	i;
-	int	j;
-	int	nb;
+	int				i;
+	int				j;
+	unsigned int	nb;
 
 	i = 0;
 	j = 0;
@@ -51,10 +51,11 @@ int	parse_args(int argc, char **argv)
 	i = 1;
 	while (argv[i])
 	{
-		if (check_numbers(argv[i++]) == ERROR)
+		if (check_numbers(argv[i]) == ERROR)
 			return (clear_philosophers(NULL), ERROR);
+		i++;
 	}
 	params = set_params(argc, argv);
-	create_philo(params);
+	create_philo(params, argc);
 	return (SUCCESS);
 }
