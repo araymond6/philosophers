@@ -6,7 +6,7 @@
 /*   By: araymond <araymond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 17:07:45 by araymond          #+#    #+#             */
-/*   Updated: 2023/06/27 15:18:07 by araymond         ###   ########.fr       */
+/*   Updated: 2023/06/28 11:45:28 by araymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "headers/philo_actions.h"
 #include "headers/philo.h"
 #include "headers/forks.h"
+#include "headers/parsing.h"
 
 t_ms	timestamp(void)
 {
@@ -49,8 +50,6 @@ void	*life(void *arg)
 	philo->start_time = timestamp();
 	philo->last_meal = philo->start_time;
 	temp = philo;
-	if (philo->philo_number % 2 == 0)
-		usleep(100);
 	while (1)
 	{
 		if (!lock_check(philo))
@@ -73,8 +72,6 @@ void	*life2(void *arg)
 	philo->start_time = timestamp();
 	philo->last_meal = philo->start_time;
 	temp = philo;
-	if (philo->philo_number % 2 == 0)
-		usleep(100);
 	while (1)
 	{
 		if (!lock_check(philo))

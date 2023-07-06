@@ -6,7 +6,7 @@
 /*   By: araymond <araymond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 12:19:25 by araymond          #+#    #+#             */
-/*   Updated: 2023/06/27 12:48:56 by araymond         ###   ########.fr       */
+/*   Updated: 2023/06/27 15:47:59 by araymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,4 +28,13 @@ pthread_mutex_t	*print_function(void *arg)
 	if (arg)
 		func_print = arg;
 	return (func_print);
+}
+
+pthread_mutex_t	*death_function(void *arg)
+{
+	static pthread_mutex_t	*func_death;
+
+	if (arg)
+		func_death = arg;
+	return (func_death);
 }

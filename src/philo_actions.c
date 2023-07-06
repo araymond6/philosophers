@@ -6,7 +6,7 @@
 /*   By: araymond <araymond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 11:00:13 by araymond          #+#    #+#             */
-/*   Updated: 2023/06/27 15:19:35 by araymond         ###   ########.fr       */
+/*   Updated: 2023/06/28 17:30:28 by araymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,11 @@
 int	is_philo_dead(t_philo *philo)
 {
 	int		i;
+	int		j;
 	t_philo	*temp;
 	
 	i = 0;
+	j = 0;
 	temp = philo;
 	while (i < philo->params->philo_count)
 	{
@@ -31,9 +33,13 @@ int	is_philo_dead(t_philo *philo)
 			temp->dead = 1;
 			return (ERROR);
 		}
+		else if (temp->dead == 1)
+		{
+			
+			return (ERROR);
+		}
 		i++;
 	}
-	
 	return (SUCCESS);
 }
 
@@ -46,18 +52,6 @@ int	print_message(t_philo *philo, char *action)
 	return (SUCCESS);
 }
 
-int	philo_sleep(t_philo *philo)
-{
-	if (!print_message(philo, SLEEPING))
-		return (ERROR);
-	if (!philo_action(philo, philo->params->time_to_sleep))
-		return (ERROR);
-	if (!print_message(philo, THINKING))
-			return (ERROR);
-	usleep(200);
-	return (SUCCESS);
-}
-
 int	philo_action(t_philo *philo, unsigned int time)
 {
 	t_ms	start_time;
@@ -67,6 +61,7 @@ int	philo_action(t_philo *philo, unsigned int time)
 	{
 		if (!is_philo_dead(philo))
 			return (ERROR);
+		usleep(100);
 	}
 	return (SUCCESS);
 }
